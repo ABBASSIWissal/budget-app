@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Budget</title>
+
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="manifest" href="./manifest.json">
+
+    <meta name="theme-color" content="#9b8177">
+</head>
+<body class="theme-beige">
+
+    <div id="setup-screen" class="screen setup-screen">
+        <div class="box">
+            <h1>💰 My Budget</h1>
+            <h2>Configuration initiale</h2>
+
+            <label for="start-month">📅 Mois de départ</label>
+            <select id="start-month">
+                <option value="0">Janvier</option>
+                <option value="1">Février</option>
+                <option value="2">Mars</option>
+                <option value="3">Avril</option>
+                <option value="4">Mai</option>
+                <option value="5">Juin</option>
+                <option value="6">Juillet</option>
+                <option value="7">Août</option>
+                <option value="8">Septembre</option>
+                <option value="9">Octobre</option>
+                <option value="10">Novembre</option>
+                <option value="11">Décembre</option>
+            </select>
+
+            <label for="start-year">📅 Année</label>
+            <input id="start-year" type="number" value="2026">
+
+            <label for="initial-budget">
+                💰 Budget mensuel en DH
+            </label>
+            <input id="initial-budget" type="number" min="1">
+
+            <label for="access-code">
+                🔐 Code d'accès à 4 chiffres
+            </label>
+            <input
+                id="access-code"
+                type="password"
+                maxlength="4"
+                inputmode="numeric"
+            >
+
+            <label for="confirm-code">
+                🔐 Confirmer le code
+            </label>
+            <input
+                id="confirm-code"
+                type="password"
+                maxlength="4"
+                inputmode="numeric"
+            >
+
+            <button type="button" onclick="setupBudget()">
+                Commencer
+            </button>
+        </div>
+    </div>
+
+    <div id="login-screen" class="screen login-screen">
+        <div class="box login-box">
+            <h1>💰 Mon Budget</h1>
+            <h2>Code d'accès</h2>
+
+            <input
+                id="login-code"
+                type="password"
+                maxlength="4"
+                inputmode="numeric"
+                placeholder="Entre ton code"
+            >
+
+            <button type="button" onclick="login()">
+                Entrer
+            </button>
+
+            <p id="login-error" class="error"></p>
+        </div>
+    </div>
+
+    <div id="app-screen" class="screen">
+
+        <nav class="navbar">
+            <button type="button" onclick="showSection('dashboard')">
+                📊 Tableau de bord
+            </button>
+
+            <button type="button" onclick="showSection('themes')">
+                🎨 Thèmes
+            </button>
+
+            <button type="button" onclick="showSection('settings')">
+                ⚙️ Paramètres
+            </button>
+
+            <button type="button" onclick="logout()">
+                🚪 Quitter
+            </button>
+        </nav>
+
+        <main>
+
+            <section id="dashboard" class="section active">
+
+                <button
+                    type="button"
+                    class="piggy-top-button"
+                    onclick="showSection('piggy-savings')"
+                    aria-label="Ouvrir la cochonnette d'épargne"
+                >
+                    <span class="piggy-top-icon">🐷</span>
+                    <span class="piggy-top-label">
+                        Cochonnette
+                    </span>
+                </button>
+
+                <div class="month-selector">
+                    <button type="button" onclick="previousMonth()">
+                        ◀
+                    </button>
+
+                    <h2 id="current-month-display">
+                        Janvier 2026
+                    </h2>
+
+                    <button type="button" onclick="nextMonth()">
+                        ▶
+                    </button>
+                </div>
+
+                <div class="cards">
+                    <div class="card">
+                        <h3>💰 Budget</h3>
+                        <p id="total-budget">0 DH</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>💸 Dépensé</h3>
+                        <p id="total-spent">0 DH</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>💵 Reste</h3>
+                        <p id="remaining-budget">0 DH</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>🌱 Économisé</h3>
+                        <p id="total-saved">0 DH</p>
+                    </div>
+                </div>
+
+                <h2>📅 Répartition par semaine</h2>
+
+                <div class="weeks">
+
+                    <div class="week">
+                        <h3>Semaine 1</h3>
+
+                        <p>
+                            Budget :
+                            <strong id="week1-budget">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <p>
+                            Dépensé :
+                            <strong id="week1-spent">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <p>
+                            Reste :
+                            <strong id="week1-remaining">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <button type="button" onclick="addExpense(1)">
+                            + Ajouter une dépense
+                        </button>
+
+                        <button
+                            type="button"
+                            class="secondary"
+                            onclick="showWeekBalance(1)"
+                        >
+                            Voir le bilan
+                        </button>
+                    </div>
+
+                    <div class="week">
+                        <h3>Semaine 2</h3>
+
+                        <p>
+                            Budget :
+                            <strong id="week2-budget">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <p>
+                            Dépensé :
+                            <strong id="week2-spent">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <p>
+                            Reste :
+                            <strong id="week2-remaining">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <button type="button" onclick="addExpense(2)">
+                            + Ajouter une dépense
+                        </button>
+
+                        <button
+                            type="button"
+                            class="secondary"
+                            onclick="showWeekBalance(2)"
+                        >
+                            Voir le bilan
+                        </button>
+                    </div>
+
+                    <div class="week">
+                        <h3>Semaine 3</h3>
+
+                        <p>
+                            Budget :
+                            <strong id="week3-budget">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <p>
+                            Dépensé :
+                            <strong id="week3-spent">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <p>
+                            Reste :
+                            <strong id="week3-remaining">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <button type="button" onclick="addExpense(3)">
+                            + Ajouter une dépense
+                        </button>
+
+                        <button
+                            type="button"
+                            class="secondary"
+                            onclick="showWeekBalance(3)"
+                        >
+                            Voir le bilan
+                        </button>
+                    </div>
+
+                    <div class="week">
+                        <h3>Semaine 4</h3>
+
+                        <p>
+                            Budget :
+                            <strong id="week4-budget">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <p>
+                            Dépensé :
+                            <strong id="week4-spent">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <p>
+                            Reste :
+                            <strong id="week4-remaining">
+                                0 DH
+                            </strong>
+                        </p>
+
+                        <button type="button" onclick="addExpense(4)">
+                            + Ajouter une dépense
+                        </button>
+
+                        <button
+                            type="button"
+                            class="secondary"
+                            onclick="showWeekBalance(4)"
+                        >
+                            Voir le bilan
+                        </button>
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="finish-month-button"
+                    onclick="finishCurrentMonth(false)"
+                >
+                    ✅ Enregistrer et terminer ce mois
+                </button>
+
+                <p
+                    id="month-status-message"
+                    class="month-status-message"
+                ></p>
+
+                <button
+                    type="button"
+                    class="monthly-balance-shortcut"
+                    onclick="showSection('monthly-balance')"
+                >
+                    <span>📅</span>
+                    <strong>
+                        Bilan des mois précédents
+                    </strong>
+                    <span class="shortcut-arrow">→</span>
+                </button>
+
+            </section>
+
+            <section id="piggy-savings" class="section">
+
+                <div class="independent-section-header">
+                    <button
+                        type="button"
+                        class="back-button"
+                        onclick="showSection('dashboard')"
+                    >
+                        ◀ Retour
+                    </button>
+
+                    <h2>🐷 Ma cochonnette d'épargne</h2>
+                </div>
+
+                <div class="piggy-page">
+                    <div class="big-piggy">🐷</div>
+
+                    <h2>Ma cochonnette d'épargne</h2>
+
+                    <p class="piggy-total-text">
+                        Total économisé :
+                        <strong id="piggy-page-total">
+                            0 DH
+                        </strong>
+                    </p>
+
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span id="piggy-progress-text">
+                                0 %
+                            </span>
+
+                            <span id="piggy-goal-text">
+                                Objectif : aucun
+                            </span>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div
+                                id="piggy-progress-fill"
+                                class="progress-fill"
+                            ></div>
+                        </div>
+                    </div>
+
+                    <label for="piggy-goal">
+                        🎯 Objectif de la cochonnette
+                    </label>
+
+                    <input
+                        id="piggy-goal"
+                        type="number"
+                        min="0"
+                        placeholder="Exemple : 5000"
+                    >
+
+                    <button type="button" onclick="savePiggyGoal()">
+                        Enregistrer l'objectif
+                    </button>
+
+                    <div class="piggy-actions-page">
+                        <button type="button" onclick="addSavings()">
+                            💰 Ajouter
+                        </button>
+
+                        <button
+                            type="button"
+                            class="secondary"
+                            onclick="removeSavings()"
+                        >
+                            💸 Retirer
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+            <section id="monthly-balance" class="section">
+
+                <div class="independent-section-header">
+                    <button
+                        type="button"
+                        class="back-button"
+                        onclick="showSection('dashboard')"
+                    >
+                        ◀ Retour
+                    </button>
+
+                    <h2>📅 Bilan des mois précédents</h2>
+                </div>
+
+                <p class="center-text">
+                    Clique sur un mois pour voir les détails.
+                </p>
+
+                <div
+                    id="months-history"
+                    class="months-history"
+                ></div>
+
+            </section>
+
+            <section id="themes" class="section">
+                <h2>🎨 Thèmes</h2>
+
+                <div class="theme-grid">
+
+                    <button
+                        type="button"
+                        class="theme-choice beige"
+                        onclick="setTheme('beige')"
+                    >
+                        🤎 Beige
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice rose"
+                        onclick="setTheme('rose')"
+                    >
+                        🌸 Rose poudré
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice rouge"
+                        onclick="setTheme('rouge')"
+                    >
+                        ❤️ Rouge doux
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice orange"
+                        onclick="setTheme('orange')"
+                    >
+                        🍊 Pêche
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice jaune"
+                        onclick="setTheme('jaune')"
+                    >
+                        🌞 Vanille
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice vert"
+                        onclick="setTheme('vert')"
+                    >
+                        🌿 Sauge
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice menthe"
+                        onclick="setTheme('menthe')"
+                    >
+                        🍃 Menthe
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice bleu"
+                        onclick="setTheme('bleu')"
+                    >
+                        🌊 Bleu doux
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice ciel"
+                        onclick="setTheme('ciel')"
+                    >
+                        ☁️ Bleu ciel
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice violet"
+                        onclick="setTheme('violet')"
+                    >
+                        💜 Lilas
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice mauve"
+                        onclick="setTheme('mauve')"
+                    >
+                        🌷 Mauve nude
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice sombre"
+                        onclick="setTheme('sombre')"
+                    >
+                        🌙 Nuit douce
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice chocolat"
+                        onclick="setTheme('chocolat')"
+                    >
+                        🍫 Café au lait
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice lavande"
+                        onclick="setTheme('lavande')"
+                    >
+                        🌺 Lavande pastel
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice minimal"
+                        onclick="setTheme('minimal')"
+                    >
+                        ⚪ Minimal
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice ocean-nuit"
+                        onclick="setTheme('ocean-nuit')"
+                    >
+                        🌌 Océan profond
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice nude"
+                        onclick="setTheme('nude')"
+                    >
+                        🤍 Nude rosé
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice terracotta"
+                        onclick="setTheme('terracotta')"
+                    >
+                        🧡 Terracotta pastel
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice pistache"
+                        onclick="setTheme('pistache')"
+                    >
+                        💚 Pistache
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice denim"
+                        onclick="setTheme('denim')"
+                    >
+                        💙 Denim doux
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice prune"
+                        onclick="setTheme('prune')"
+                    >
+                        🍇 Prune douce
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice caramel"
+                        onclick="setTheme('caramel')"
+                    >
+                        🍯 Caramel
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice eucalyptus"
+                        onclick="setTheme('eucalyptus')"
+                    >
+                        🌱 Eucalyptus
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-choice ardoise"
+                        onclick="setTheme('ardoise')"
+                    >
+                        🪨 Ardoise
+                    </button>
+
+                </div>
+            </section>
+
+            <section id="settings" class="section">
+                <h2>⚙️ Paramètres</h2>
+
+                <div class="settings-box">
+                    <button type="button" onclick="changeBudget()">
+                        💰 Modifier le budget
+                    </button>
+
+                    <button type="button" onclick="changeCode()">
+                        🔐 Modifier le code PIN
+                    </button>
+
+                    <button
+                        type="button"
+                        class="danger"
+                        onclick="resetApplication()"
+                    >
+                        🗑️ Réinitialiser
+                    </button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="expense-modal" class="modal">
+        <div class="modal-box">
+            <h2>Ajouter une dépense</h2>
+
+            <input
+                id="expense-amount"
+                type="number"
+                min="1"
+                placeholder="Montant en DH"
+            >
+
+            <input
+                id="expense-description"
+                type="text"
+                placeholder="Description"
+            >
+
+            <button type="button" onclick="saveExpense()">
+                Enregistrer
+            </button>
+
+            <button
+                type="button"
+                class="secondary"
+                onclick="closeExpenseModal()"
+            >
+                Annuler
+            </button>
+        </div>
+    </div>
+
+    <div id="balance-modal" class="modal">
+        <div class="modal-box">
+            <h2 id="balance-title">Bilan</h2>
+
+            <div id="balance-content"></div>
+
+            <button type="button" onclick="closeBalanceModal()">
+                Fermer
+            </button>
+        </div>
+    </div>
+
+    <script src="./js/app.js"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                 navigator.serviceWorker.register('./sw.js')
+                    .then(function () {
+                        console.log(
+                            'Application disponible hors connexion.'
+                        );
+                    })
+                    .catch(function (error) {
+                        console.error(
+                            'Erreur du service worker :',
+                            error
+                        );
+                    });
+            });
+        }
+    </script>
+
+</body>
+</html>
