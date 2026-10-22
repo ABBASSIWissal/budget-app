@@ -161,158 +161,16 @@
                     </div>
                 </div>
 
-                <h2>📅 Répartition par semaine</h2>
+                <h2>💸 Dépenses du mois</h2>
 
-                <div class="weeks">
+                <div class="month-expenses-container">
+                    <button type="button" onclick="addExpense()" class="add-expense-main-btn">
+                        + Ajouter une dépense
+                    </button>
 
-                    <div class="week">
-                        <h3>Semaine 1</h3>
-
-                        <p>
-                            Budget :
-                            <strong id="week1-budget">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <p>
-                            Dépensé :
-                            <strong id="week1-spent">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <p>
-                            Reste :
-                            <strong id="week1-remaining">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <button type="button" onclick="addExpense(1)">
-                            + Ajouter une dépense
-                        </button>
-
-                        <button
-                            type="button"
-                            class="secondary"
-                            onclick="showWeekBalance(1)"
-                        >
-                            Voir le bilan
-                        </button>
+                    <div id="expenses-list" class="expenses-list">
+                        <!-- Liste des dépenses injectée en JavaScript -->
                     </div>
-
-                    <div class="week">
-                        <h3>Semaine 2</h3>
-
-                        <p>
-                            Budget :
-                            <strong id="week2-budget">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <p>
-                            Dépensé :
-                            <strong id="week2-spent">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <p>
-                            Reste :
-                            <strong id="week2-remaining">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <button type="button" onclick="addExpense(2)">
-                            + Ajouter une dépense
-                        </button>
-
-                        <button
-                            type="button"
-                            class="secondary"
-                            onclick="showWeekBalance(2)"
-                        >
-                            Voir le bilan
-                        </button>
-                    </div>
-
-                    <div class="week">
-                        <h3>Semaine 3</h3>
-
-                        <p>
-                            Budget :
-                            <strong id="week3-budget">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <p>
-                            Dépensé :
-                            <strong id="week3-spent">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <p>
-                            Reste :
-                            <strong id="week3-remaining">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <button type="button" onclick="addExpense(3)">
-                            + Ajouter une dépense
-                        </button>
-
-                        <button
-                            type="button"
-                            class="secondary"
-                            onclick="showWeekBalance(3)"
-                        >
-                            Voir le bilan
-                        </button>
-                    </div>
-
-                    <div class="week">
-                        <h3>Semaine 4</h3>
-
-                        <p>
-                            Budget :
-                            <strong id="week4-budget">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <p>
-                            Dépensé :
-                            <strong id="week4-spent">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <p>
-                            Reste :
-                            <strong id="week4-remaining">
-                                0 DH
-                            </strong>
-                        </p>
-
-                        <button type="button" onclick="addExpense(4)">
-                            + Ajouter une dépense
-                        </button>
-
-                        <button
-                            type="button"
-                            class="secondary"
-                            onclick="showWeekBalance(4)"
-                        >
-                            Voir le bilan
-                        </button>
-                    </div>
-
                 </div>
 
                 <button
@@ -717,18 +575,18 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function () {
-                 navigator.serviceWorker.register('./sw.js')
-                    .then(function () {
-                        console.log(
-                            'Application disponible hors connexion.'
-                        );
+                navigator.serviceWorker.register('./sw.js')
+                    .then(function (registration) {
+                        console.log('Application disponible hors connexion.');
+                        registration.update();
                     })
                     .catch(function (error) {
-                        console.error(
-                            'Erreur du service worker :',
-                            error
-                        );
+                        console.error('Erreur du service worker :', error);
                     });
+            });
+
+            navigator.serviceWorker.addEventListener('controllerchange', function () {
+                window.location.reload();
             });
         }
     </script>
