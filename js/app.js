@@ -37,7 +37,6 @@ let currentMonth = 0;
 let currentYear = 2026;
 let expenses = {};
 let totalSavings = 0;
-let currentWeek = 1;
 let piggyGoal = 0;
 let lastSavedMonth = '';
 let audioContext = null;
@@ -165,7 +164,7 @@ function setupBudget() {
         return;
     }
 
-    if (!/^\d{4}$/.test(code)) {
+    if (!/^\d{4}\$/.test(code)) {
         alert(
             'Le code doit contenir exactement 4 chiffres.'
         );
@@ -338,26 +337,10 @@ function ensureMonthExists(
 
     if (!expenses[monthKey]) {
         expenses[monthKey] = {
-            weeks: [0, 0, 0, 0],
             details: [],
             completed: false,
             completedAt: null
         };
-    }
-
-    if (
-        !Array.isArray(
-            expenses[monthKey].weeks
-        )
-    ) {
-        expenses[monthKey].weeks =
-            [0, 0, 0, 0];
-    }
-
-    while (
-        expenses[monthKey].weeks.length < 4
-    ) {
-        expenses[monthKey].weeks.push(0);
     }
 
     if (
@@ -433,6 +416,21 @@ function finishCurrentMonth(
     monthData.completed = true;
     monthData.completedAt =
         new Date().toISOString();
+
+    const totalSpent =
+        monthData.details.reduce(function (
+            total,
+            item
+        ) {
+            return total + Number(item.amount || 0);
+        }, 0);
+
+    const remaining =
+        monthlyBudget - totalSpent;
+
+    if (remaining > 0) {
+        totalSavings += remaining;
+    }
 
     lastSavedMonth = currentKey;
 
@@ -524,7 +522,7 @@ function checkMonthFinishedAutomatically() {
 
 
 /* =========================================================
-   TABLEAU DE BORD
+   TABLEAU DE BORD (DÉPENSES DU MOIS SEULEMENT)
 ========================================================= */
 
 function updateDashboard() {
@@ -532,18 +530,15 @@ function updateDashboard() {
         ensureMonthExists();
 
     const totalSpent =
-        monthData.weeks.reduce(function (
+        monthData.details.reduce(function (
             total,
-            amount
+            item
         ) {
-            return total + Number(amount || 0);
+            return total + Number(item.amount || 0);
         }, 0);
 
     const remaining =
         monthlyBudget - totalSpent;
-
-    const weeklyBudget =
-        monthlyBudget / 4;
 
     const budgetElement =
         document.getElementById(
@@ -582,58 +577,79 @@ function updateDashboard() {
 
     if (savedElement) {
         savedElement.textContent =
-            formatMoney(
-                Math.max(remaining, 0)
-            );
+            formatMoney(totalSavings);
     }
 
-    for (
-        let week = 1;
-        week <= 4;
-        week++
-    ) {
-        const spent =
-            Number(
-                monthData.weeks[week - 1] || 0
-            );
+    const message =
+        document.getElementById(
+            'month-status-message'
+        );
 
-        const weekRemaining =
-            weeklyBudget - spent;
-
-        const weekBudgetElement =
-            document.getElementById(
-                'week' + week + '-budget'
-            );
-
-        const weekSpentElement =
-            document.getElementById(
-                'week' + week + '-spent'
-            );
-
-        const weekRemainingElement =
-            document.getElementById(
-                'week' + week + '-remaining'
-            );
-
-        if (weekBudgetElement) {
-            weekBudgetElement.textContent =
-                formatMoney(weeklyBudget);
-        }
-
-        if (weekSpentElement) {
-            weekSpentElement.textContent =
-                formatMoney(spent);
-        }
-
-        if (weekRemainingElement) {
-            weekRemainingElement.textContent =
-                formatMoney(weekRemaining);
+    if (message) {
+        if (monthData.completed) {
+            message.textContent =
+                '🔒 Ce mois est clôturé et enregistré.';
+        } else {
+            message.textContent = '';
         }
     }
 
+    renderMonthExpensesList(monthData.details);
     updatePiggyDisplay();
     updatePiggyProgress();
     saveData();
+}
+
+function renderMonthExpensesList(details) {
+    const container =
+        document.getElementById('expenses-list');
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = '';
+
+    if (!details || details.length === 0) {
+        container.innerHTML =
+            '<div class="empty-expenses">Aucune dépense enregistrée pour ce mois.</div>';
+        return;
+    }
+
+    details.slice().reverse().forEach(function (item, index) {
+        const realIndex =
+            details.length - 1 - index;
+
+        const div =
+            document.createElement('div');
+
+        div.className = 'expense-item';
+
+        div.innerHTML = `
+            <div class="expense-info">
+                <span class="expense-desc">
+                    ${escapeHtml(item.description)}
+                </span>
+                <span class="expense-date">
+                    ${escapeHtml(item.date)}
+                </span>
+            </div>
+            <div class="expense-action">
+                <span class="expense-amount">
+                    -${formatMoney(item.amount)}
+                </span>
+                <button
+                    type="button"
+                    class="delete-expense-btn"
+                    onclick="deleteExpense(${realIndex})"
+                >
+                    ✕
+                </button>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
 }
 
 
@@ -641,7 +657,7 @@ function updateDashboard() {
    DÉPENSES
 ========================================================= */
 
-function addExpense(week) {
+function addExpense() {
     const monthData =
         ensureMonthExists();
 
@@ -651,8 +667,6 @@ function addExpense(week) {
         );
         return;
     }
-
-    currentWeek = week;
 
     const modal =
         document.getElementById(
@@ -728,12 +742,7 @@ function saveExpense() {
         return;
     }
 
-    monthData.weeks[
-        currentWeek - 1
-    ] += amount;
-
     monthData.details.push({
-        week: currentWeek,
         amount: amount,
         description: description || 'Dépense',
         date: new Date().toLocaleDateString(
@@ -748,70 +757,21 @@ function saveExpense() {
     alert('Dépense ajoutée avec succès.');
 }
 
-function showWeekBalance(week) {
+function deleteExpense(index) {
     const monthData =
         ensureMonthExists();
 
-    const weekExpenses =
-        monthData.details.filter(function (
-            item
-        ) {
-            return Number(item.week) ===
-                Number(week);
-        });
-
-    const title =
-        document.getElementById(
-            'balance-title'
+    if (monthData.completed) {
+        alert(
+            'Ce mois est clôturé. Tu ne peux plus modifier ses dépenses.'
         );
-
-    const content =
-        document.getElementById(
-            'balance-content'
-        );
-
-    const modal =
-        document.getElementById(
-            'balance-modal'
-        );
-
-    if (title) {
-        title.textContent =
-            'Bilan de la semaine ' +
-            week;
+        return;
     }
 
-    if (content) {
-        if (weekExpenses.length === 0) {
-            content.innerHTML =
-                '<p>Aucune dépense cette semaine.</p>';
-        } else {
-            let html = '';
-
-            weekExpenses.forEach(function (
-                item
-            ) {
-                html += `
-                    <div class="balance-item">
-                        <strong>
-                            ${formatMoney(item.amount)}
-                        </strong>
-                        -
-                        ${escapeHtml(item.description)}
-                        <br>
-                        <small>
-                            ${escapeHtml(item.date)}
-                        </small>
-                    </div>
-                `;
-            });
-
-            content.innerHTML = html;
-        }
-    }
-
-    if (modal) {
-        modal.style.display = 'flex';
+    if (confirm('Veux-tu vraiment supprimer cette dépense ?')) {
+        monthData.details.splice(index, 1);
+        saveData();
+        updateDashboard();
     }
 }
 
@@ -1175,23 +1135,22 @@ function updateMonthlyBalance() {
 
         const data =
             expenses[monthKey] || {
-                weeks: [0, 0, 0, 0],
                 details: [],
                 completed: false
             };
 
-        const weeks =
-            Array.isArray(data.weeks)
-                ? data.weeks
-                : [0, 0, 0, 0];
+        const details =
+            Array.isArray(data.details)
+                ? data.details
+                : [];
 
         const totalSpent =
-            weeks.reduce(function (
+            details.reduce(function (
                 total,
-                amount
+                item
             ) {
                 return total +
-                    Number(amount || 0);
+                    Number(item.amount || 0);
             }, 0);
 
         const remaining =
@@ -1340,8 +1299,6 @@ function createMonthExpensesHtml(details) {
                 ${escapeHtml(item.description)}
                 <br>
                 <small>
-                    Semaine ${item.week}
-                    —
                     ${escapeHtml(item.date)}
                 </small>
             </div>
@@ -1440,9 +1397,6 @@ function changeBudget() {
     alert(
         'Budget modifié à ' +
         formatMoney(newBudget) +
-        '.\n\n' +
-        'Budget par semaine : ' +
-        formatMoney(newBudget / 4) +
         '.'
     );
 }
@@ -1457,7 +1411,7 @@ function changeCode() {
         return;
     }
 
-    if (!/^\d{4}$/.test(newCode)) {
+    if (!/^\d{4}\$/.test(newCode)) {
         alert(
             'Le code doit contenir exactement 4 chiffres.'
         );
