@@ -14,21 +14,35 @@
     box-sizing: border-box;
 }
 
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
 body {
     min-height: 100vh;
-    margin: 0;
     background: var(--background);
     color: var(--text);
     font-family: Arial, sans-serif;
-    transition:
-        background 0.25s ease,
-        color 0.25s ease;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+img,
+svg {
+    max-width: 100%;
+    height: auto;
 }
 
 button,
 input,
-select {
+select,
+textarea {
     font: inherit;
+    max-width: 100%;
 }
 
 button {
@@ -38,10 +52,7 @@ button {
     background: var(--primary);
     color: #ffffff;
     cursor: pointer;
-    transition:
-        transform 0.2s ease,
-        opacity 0.2s ease,
-        background 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
 }
 
 button:hover {
@@ -60,7 +71,8 @@ button.danger {
 }
 
 input,
-select {
+select,
+textarea {
     width: 100%;
     margin: 7px 0 17px;
     padding: 13px;
@@ -72,7 +84,8 @@ select {
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     border-color: var(--primary);
 }
 
@@ -171,7 +184,7 @@ main {
 }
 
 .card,
-.week,
+.month-expenses-container,
 .piggy-page,
 .settings-box,
 .history-item {
@@ -196,25 +209,81 @@ main {
     font-weight: bold;
 }
 
-.weeks {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-}
-
-.week {
+/* =========================================================
+   CONTENEUR DÉPENSES MENSUELLES
+========================================================= */
+.month-expenses-container {
     padding: 20px;
+    margin-bottom: 25px;
 }
 
-.week h3 {
-    color: var(--primary);
-}
-
-.week button {
+.add-expense-main-btn {
     width: 100%;
-    margin-top: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 
+.expenses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--surface-soft);
+}
+
+.expense-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.expense-desc {
+    font-weight: bold;
+}
+
+.expense-date {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.expense-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.expense-amount {
+    font-weight: bold;
+    color: var(--danger);
+    font-size: 16px;
+}
+
+.delete-expense-btn {
+    padding: 6px 10px;
+    background: var(--danger);
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.empty-expenses {
+    text-align: center;
+    color: var(--muted);
+    padding: 20px 0;
+    font-style: italic;
+}
+
+/* =========================================================
+   BOUTONS ET SECTIONS
+========================================================= */
 .piggy-top-button {
     display: inline-flex;
     align-items: center;
@@ -456,127 +525,32 @@ main {
     border-color: var(--primary-dark);
 }
 
-.theme-choice.beige {
-    background: #eadcc8;
-    color: #59493d;
-}
+/* Thèmes spécifiques */
+.theme-choice.beige { background: #eadcc8; color: #59493d; }
+.theme-choice.rose { background: #f6c9d5; color: #714451; }
+.theme-choice.rouge { background: #edb0b1; color: #713d42; }
+.theme-choice.orange { background: #f6c9a5; color: #744d38; }
+.theme-choice.jaune { background: #f8e7a6; color: #71622c; }
+.theme-choice.vert { background: #c3d8c0; color: #4b6550; }
+.theme-choice.menthe { background: #b9ddd5; color: #3f6660; }
+.theme-choice.bleu { background: #b8d3e5; color: #456174; }
+.theme-choice.ciel { background: #c6e4ed; color: #456a74; }
+.theme-choice.violet { background: #d8c6df; color: #604d68; }
+.theme-choice.mauve { background: #d8bfd2; color: #684d61; }
+.theme-choice.sombre { background: #52515b; color: #fffaf3; }
+.theme-choice.chocolat { background: #b99882; color: #4e3c34; }
+.theme-choice.lavande { background: #d9d0ed; color: #5b5276; }
+.theme-choice.minimal { background: #f2f0ed; color: #55504d; }
+.theme-choice.ocean-nuit { background: #526a71; color: #f7f4ee; }
+.theme-choice.nude { background: #e7c8bc; color: #725149; }
+.theme-choice.terracotta { background: #e6b39c; color: #71483c; }
+.theme-choice.pistache { background: #cbd9ae; color: #53613f; }
+.theme-choice.denim { background: #9fb9cc; color: #3e586c; }
+.theme-choice.prune { background: #9d7d91; color: #fff8f5; }
+.theme-choice.caramel { background: #d2aa7d; color: #60452e; }
+.theme-choice.eucalyptus { background: #9dbdb0; color: #3d5b52; }
+.theme-choice.ardoise { background: #66727a; color: #ffffff; }
 
-.theme-choice.rose {
-    background: #f6c9d5;
-    color: #714451;
-}
-
-.theme-choice.rouge {
-    background: #edb0b1;
-    color: #713d42;
-}
-
-.theme-choice.orange {
-    background: #f6c9a5;
-    color: #744d38;
-}
-
-.theme-choice.jaune {
-    background: #f8e7a6;
-    color: #71622c;
-}
-
-.theme-choice.vert {
-    background: #c3d8c0;
-    color: #4b6550;
-}
-
-.theme-choice.menthe {
-    background: #b9ddd5;
-    color: #3f6660;
-}
-
-.theme-choice.bleu {
-    background: #b8d3e5;
-    color: #456174;
-}
-
-.theme-choice.ciel {
-    background: #c6e4ed;
-    color: #456a74;
-}
-
-.theme-choice.violet {
-    background: #d8c6df;
-    color: #604d68;
-}
-
-.theme-choice.mauve {
-    background: #d8bfd2;
-    color: #684d61;
-}
-
-.theme-choice.sombre {
-    background: #52515b;
-    color: #fffaf3;
-}
-
-.theme-choice.chocolat {
-    background: #b99882;
-    color: #4e3c34;
-}
-
-.theme-choice.lavande {
-    background: #d9d0ed;
-    color: #5b5276;
-}
-
-.theme-choice.minimal {
-    background: #f2f0ed;
-    color: #55504d;
-}
-
-.theme-choice.ocean-nuit {
-    background: #526a71;
-    color: #f7f4ee;
-}
-
-.theme-choice.nude {
-    background: #e7c8bc;
-    color: #725149;
-}
-
-.theme-choice.terracotta {
-    background: #e6b39c;
-    color: #71483c;
-}
-
-.theme-choice.pistache {
-    background: #cbd9ae;
-    color: #53613f;
-}
-
-.theme-choice.denim {
-    background: #9fb9cc;
-    color: #3e586c;
-}
-
-.theme-choice.prune {
-    background: #9d7d91;
-    color: #fff8f5;
-}
-
-.theme-choice.caramel {
-    background: #d2aa7d;
-    color: #60452e;
-}
-
-.theme-choice.eucalyptus {
-    background: #9dbdb0;
-    color: #3d5b52;
-}
-
-.theme-choice.ardoise {
-    background: #66727a;
-    color: #ffffff;
-}
-
-/* Les 3 boutons restent organisés verticalement. */
 .settings-box {
     display: flex;
     flex-direction: column;
@@ -623,230 +597,37 @@ main {
     text-align: center;
 }
 
-
 /* =========================================================
-   THÈMES
+   THÈMES EN CSS VARIABLES
 ========================================================= */
+body.theme-beige { --primary: #9b8177; --primary-dark: #655149; --surface: #fffdfb; --surface-soft: #f8f0ec; --background: #f4e9e4; --text: #423632; }
+body.theme-rose { --primary: #b8788b; --primary-dark: #754957; --surface: #fffafb; --surface-soft: #fae9ee; --background: #f3dfe5; --text: #49343b; }
+body.theme-rouge { --primary: #b66d72; --primary-dark: #774247; --surface: #fffafa; --surface-soft: #f5e0e0; --background: #eed0d1; --text: #4b3032; }
+body.theme-orange { --primary: #bf8262; --primary-dark: #7a4d39; --surface: #fffaf5; --surface-soft: #f9e7d9; --background: #f2d2bd; --text: #4c362b; }
+body.theme-jaune { --primary: #a89555; --primary-dark: #6d612e; --surface: #fffef8; --surface-soft: #f9f0c9; --background: #f3e7b1; --text: #4e4728; }
+body.theme-vert { --primary: #718f73; --primary-dark: #4c674e; --surface: #fbfef9; --surface-soft: #e5eee2; --background: #d0e0cd; --text: #354739; }
+body.theme-menthe { --primary: #65a39a; --primary-dark: #3f7069; --surface: #f8fffd; --surface-soft: #dff1ed; --background: #c5e5df; --text: #304b47; }
+body.theme-bleu { --primary: #719bb4; --primary-dark: #496e84; --surface: #f9fcff; --surface-soft: #e1edf4; --background: #cbdfe9; --text: #344954; }
+body.theme-ciel { --primary: #78aeba; --primary-dark: #4d7c87; --surface: #f9feff; --surface-soft: #e1f2f5; --background: #cce9ee; --text: #34515a; }
+body.theme-violet { --primary: #967ba2; --primary-dark: #634e6d; --surface: #fffbff; --surface-soft: #eee5f1; --background: #dccde2; --text: #47384d; }
+body.theme-mauve { --primary: #9c7793; --primary-dark: #684d61; --surface: #fffafd; --surface-soft: #f0e2ec; --background: #e0cedb; --text: #4d3b48; }
+body.theme-sombre { --primary: #c6a985; --primary-dark: #e0c29b; --surface: #48474f; --surface-soft: #5b5962; --background: #303037; --text: #fffaf4; }
+body.theme-chocolat { --primary: #b28b75; --primary-dark: #dfb59b; --surface: #59463d; --surface-soft: #6c564b; --background: #3e302b; --text: #fff8f1; }
+body.theme-lavande { --primary: #9184b6; --primary-dark: #62577e; --surface: #fcfbff; --surface-soft: #eeeafd; --background: #ddd7ef; --text: #403957; }
+body.theme-minimal { --primary: #74716e; --primary-dark: #464442; --surface: #ffffff; --surface-soft: #f2f0ee; --background: #eae7e4; --text: #393735; }
+body.theme-ocean-nuit { --primary: #7daeb6; --primary-dark: #b6d9dc; --surface: #40565b; --surface-soft: #536d72; --background: #2b3e42; --text: #fffaf4; }
+body.theme-nude { --primary: #a98276; --primary-dark: #704f48; --surface: #fffaf7; --surface-soft: #f4e5de; --background: #e8cfc5; --text: #4c3934; }
+body.theme-terracotta { --primary: #b97860; --primary-dark: #784b3e; --surface: #fffaf7; --surface-soft: #f5ded4; --background: #e9c2b2; --text: #4a332b; }
+body.theme-pistache { --primary: #82966a; --primary-dark: #556640; --surface: #fcfff8; --surface-soft: #e9f0d9; --background: #d9e3bb; --text: #3b4930; }
+body.theme-denim { --primary: #668ba5; --primary-dark: #456579; --surface: #f8fcff; --surface-soft: #dce9f1; --background: #b8cedb; --text: #304552; }
+body.theme-prune { --primary: #8d687f; --primary-dark: #634355; --surface: #fffafd; --surface-soft: #ecdee8; --background: #c9adbf; --text: #46313e; }
+body.theme-caramel { --primary: #aa8058; --primary-dark: #705238; --surface: #fffaf3; --surface-soft: #f1e0c7; --background: #dec29c; --text: #4d3928; }
+body.theme-eucalyptus { --primary: #6f9788; --primary-dark: #4d6e62; --surface: #f8fffc; --surface-soft: #dfede7; --background: #c3dcd2; --text: #334840; }
+body.theme-ardoise { --primary: #82939a; --primary-dark: #b8c8ca; --surface: #56636a; --surface-soft: #68777d; --background: #3c494f; --text: #fffdf8; }
 
-body.theme-beige {
-    --primary: #9b8177;
-    --primary-dark: #655149;
-    --surface: #fffdfb;
-    --surface-soft: #f8f0ec;
-    --background: #f4e9e4;
-    --text: #423632;
-}
-
-body.theme-rose {
-    --primary: #b8788b;
-    --primary-dark: #754957;
-    --surface: #fffafb;
-    --surface-soft: #fae9ee;
-    --background: #f3dfe5;
-    --text: #49343b;
-}
-
-body.theme-rouge {
-    --primary: #b66d72;
-    --primary-dark: #774247;
-    --surface: #fffafa;
-    --surface-soft: #f5e0e0;
-    --background: #eed0d1;
-    --text: #4b3032;
-}
-
-body.theme-orange {
-    --primary: #bf8262;
-    --primary-dark: #7a4d39;
-    --surface: #fffaf5;
-    --surface-soft: #f9e7d9;
-    --background: #f2d2bd;
-    --text: #4c362b;
-}
-
-body.theme-jaune {
-    --primary: #a89555;
-    --primary-dark: #6d612e;
-    --surface: #fffef8;
-    --surface-soft: #f9f0c9;
-    --background: #f3e7b1;
-    --text: #4e4728;
-}
-
-body.theme-vert {
-    --primary: #718f73;
-    --primary-dark: #4c674e;
-    --surface: #fbfef9;
-    --surface-soft: #e5eee2;
-    --background: #d0e0cd;
-    --text: #354739;
-}
-
-body.theme-menthe {
-    --primary: #65a39a;
-    --primary-dark: #3f7069;
-    --surface: #f8fffd;
-    --surface-soft: #dff1ed;
-    --background: #c5e5df;
-    --text: #304b47;
-}
-
-body.theme-bleu {
-    --primary: #719bb4;
-    --primary-dark: #496e84;
-    --surface: #f9fcff;
-    --surface-soft: #e1edf4;
-    --background: #cbdfe9;
-    --text: #344954;
-}
-
-body.theme-ciel {
-    --primary: #78aeba;
-    --primary-dark: #4d7c87;
-    --surface: #f9feff;
-    --surface-soft: #e1f2f5;
-    --background: #cce9ee;
-    --text: #34515a;
-}
-
-body.theme-violet {
-    --primary: #967ba2;
-    --primary-dark: #634e6d;
-    --surface: #fffbff;
-    --surface-soft: #eee5f1;
-    --background: #dccde2;
-    --text: #47384d;
-}
-
-body.theme-mauve {
-    --primary: #9c7793;
-    --primary-dark: #684d61;
-    --surface: #fffafd;
-    --surface-soft: #f0e2ec;
-    --background: #e0cedb;
-    --text: #4d3b48;
-}
-
-body.theme-sombre {
-    --primary: #c6a985;
-    --primary-dark: #e0c29b;
-    --surface: #48474f;
-    --surface-soft: #5b5962;
-    --background: #303037;
-    --text: #fffaf4;
-}
-
-body.theme-chocolat {
-    --primary: #b28b75;
-    --primary-dark: #dfb59b;
-    --surface: #59463d;
-    --surface-soft: #6c564b;
-    --background: #3e302b;
-    --text: #fff8f1;
-}
-
-body.theme-lavande {
-    --primary: #9184b6;
-    --primary-dark: #62577e;
-    --surface: #fcfbff;
-    --surface-soft: #eeeafd;
-    --background: #ddd7ef;
-    --text: #403957;
-}
-
-body.theme-minimal {
-    --primary: #74716e;
-    --primary-dark: #464442;
-    --surface: #ffffff;
-    --surface-soft: #f2f0ee;
-    --background: #eae7e4;
-    --text: #393735;
-}
-
-body.theme-ocean-nuit {
-    --primary: #7daeb6;
-    --primary-dark: #b6d9dc;
-    --surface: #40565b;
-    --surface-soft: #536d72;
-    --background: #2b3e42;
-    --text: #fffaf4;
-}
-
-body.theme-nude {
-    --primary: #a98276;
-    --primary-dark: #704f48;
-    --surface: #fffaf7;
-    --surface-soft: #f4e5de;
-    --background: #e8cfc5;
-    --text: #4c3934;
-}
-
-body.theme-terracotta {
-    --primary: #b97860;
-    --primary-dark: #784b3e;
-    --surface: #fffaf7;
-    --surface-soft: #f5ded4;
-    --background: #e9c2b2;
-    --text: #4a332b;
-}
-
-body.theme-pistache {
-    --primary: #82966a;
-    --primary-dark: #556640;
-    --surface: #fcfff8;
-    --surface-soft: #e9f0d9;
-    --background: #d9e3bb;
-    --text: #3b4930;
-}
-
-body.theme-denim {
-    --primary: #668ba5;
-    --primary-dark: #456579;
-    --surface: #f8fcff;
-    --surface-soft: #dce9f1;
-    --background: #b8cedb;
-    --text: #304552;
-}
-
-body.theme-prune {
-    --primary: #8d687f;
-    --primary-dark: #634355;
-    --surface: #fffafd;
-    --surface-soft: #ecdee8;
-    --background: #c9adbf;
-    --text: #46313e;
-}
-
-body.theme-caramel {
-    --primary: #aa8058;
-    --primary-dark: #705238;
-    --surface: #fffaf3;
-    --surface-soft: #f1e0c7;
-    --background: #dec29c;
-    --text: #4d3928;
-}
-
-body.theme-eucalyptus {
-    --primary: #6f9788;
-    --primary-dark: #4d6e62;
-    --surface: #f8fffc;
-    --surface-soft: #dfede7;
-    --background: #c3dcd2;
-    --text: #334840;
-}
-
-body.theme-ardoise {
-    --primary: #82939a;
-    --primary-dark: #b8c8ca;
-    --surface: #56636a;
-    --surface-soft: #68777d;
-    --background: #3c494f;
-    --text: #fffdf8;
-}
-
+/* Media Queries */
 @media (max-width: 900px) {
-    .cards,
-    .weeks {
+    .cards {
         grid-template-columns: repeat(2, 1fr);
     }
 
@@ -856,12 +637,16 @@ body.theme-ardoise {
 }
 
 @media (max-width: 600px) {
+    body {
+        font-size: 16px;
+    }
+
     main {
         padding: 15px;
+        width: 100%;
     }
 
     .cards,
-    .weeks,
     .theme-grid,
     .history-stats {
         grid-template-columns: 1fr;
@@ -896,90 +681,12 @@ body.theme-ardoise {
         align-items: flex-start;
         flex-direction: column;
     }
-}
-* {
-  box-sizing: border-box;
-}
 
-html,
-body {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
-img,
-svg {
-  max-width: 100%;
-  height: auto;
-}
-
-button,
-input,
-select,
-textarea {
-  max-width: 100%;
-}
-
-@media screen and (max-width: 600px) {
-  body {
-    font-size: 16px;
-  }
-
-  main,
-  .container,
-  .app,
-  .content,
-  .dashboard {
-    width: 100%;
-    max-width: 100%;
-    padding: 12px;
-    margin: 0;
-  }
-
-  h1 {
-    font-size: 24px;
-  }
-
-  h2 {
-    font-size: 20px;
-  }
-
-  .grid,
-  .cards,
-  .stats,
-  .row {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 12px;
-  }
-
-  button {
-    min-height: 44px;
-    font-size: 16px;
-  }
-
-  input,
-  select,
-  textarea {
-    width: 100%;
-    min-height: 44px;
-    font-size: 16px;
-  }
-
-  table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    font-size: 14px;
-  }
-
-  nav,
-  header {
-    max-width: 100%;
-    overflow-x: auto;
-  }
+    button,
+    input,
+    select,
+    textarea {
+        min-height: 44px;
+        font-size: 16px;
+    }
 }
