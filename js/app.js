@@ -133,11 +133,13 @@ function setupBudget() {
         document.getElementById('initial-budget').value
     );
 
-    const code =
-        document.getElementById('access-code').value;
+    const code = String(
+        document.getElementById('access-code').value || ''
+    ).trim();
 
-    const confirmCode =
-        document.getElementById('confirm-code').value;
+    const confirmCode = String(
+        document.getElementById('confirm-code').value || ''
+    ).trim();
 
     if (
         !Number.isInteger(month) ||
@@ -164,7 +166,7 @@ function setupBudget() {
         return;
     }
 
-    if (!/^\d{4}\$/.test(code)) {
+    if (!/^\d{4}$/.test(code)) {
         alert(
             'Le code doit contenir exactement 4 chiffres.'
         );
@@ -197,70 +199,6 @@ function setupBudget() {
     alert(
         'Configuration enregistrée. Entre maintenant ton code.'
     );
-}
-
-function login() {
-    const code =
-        document.getElementById('login-code').value;
-
-    if (code === accessCode) {
-        document.getElementById('setup-screen').style.display =
-            'none';
-
-        document.getElementById('login-screen').style.display =
-            'none';
-
-        document.getElementById('app-screen').style.display =
-            'block';
-
-        updateMonthDisplay();
-        updateDashboard();
-        checkMonthFinishedAutomatically();
-
-        document.getElementById('login-error').textContent =
-            '';
-    } else {
-        document.getElementById('login-error').textContent =
-            'Code incorrect.';
-    }
-}
-
-function logout() {
-    document.getElementById('app-screen').style.display =
-        'none';
-
-    document.getElementById('login-screen').style.display =
-        'flex';
-
-    document.getElementById('login-code').value = '';
-
-    document.getElementById('login-error').textContent =
-        '';
-}
-
-function showCorrectScreen() {
-    if (
-        monthlyBudget > 0 &&
-        accessCode
-    ) {
-        document.getElementById('setup-screen').style.display =
-            'none';
-
-        document.getElementById('login-screen').style.display =
-            'flex';
-
-        document.getElementById('app-screen').style.display =
-            'none';
-    } else {
-        document.getElementById('setup-screen').style.display =
-            'flex';
-
-        document.getElementById('login-screen').style.display =
-            'none';
-
-        document.getElementById('app-screen').style.display =
-            'none';
-    }
 }
 
 
