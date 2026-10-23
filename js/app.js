@@ -42,10 +42,10 @@ let lastSavedMonth = '';
 let audioContext = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-    loadData();
-    loadTheme();
-    showCorrectScreen();
-    updateMonthDisplay();
+    loadData();             // 1. Charger les données du localStorage d'abord
+    loadTheme();            // 2. Appliquer le thème
+    showCorrectScreen();    // 3. Afficher le bon écran (Login si déjà configuré)
+    updateMonthDisplay();   // 4. Mettre à jour l'affichage
 
     setTimeout(function () {
         checkMonthFinishedAutomatically();
