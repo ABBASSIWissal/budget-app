@@ -42,10 +42,11 @@ let lastSavedMonth = '';
 let audioContext = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-    loadData();             // 1. Charger les données du localStorage d'abord
-    loadTheme();            // 2. Appliquer le thème
-    showCorrectScreen();    // 3. Afficher le bon écran (Login si déjà configuré)
-    updateMonthDisplay();   // 4. Mettre à jour l'affichage
+    // Ordre d'initialisation : chargement des données en premier
+    loadData();
+    loadTheme();
+    showCorrectScreen();
+    updateMonthDisplay();
 
     setTimeout(function () {
         checkMonthFinishedAutomatically();
@@ -117,7 +118,7 @@ function getPreviousMonthValues() {
 
 
 /* =========================================================
-   CONFIGURATION
+   CONFIGURATION & AUTHENTIFICATION
 ========================================================= */
 
 function setupBudget() {
@@ -229,6 +230,44 @@ function login() {
     } else {
         document.getElementById('login-error').textContent =
             'Code incorrect.';
+    }
+}
+
+function logout() {
+    document.getElementById('app-screen').style.display =
+        'none';
+
+    document.getElementById('login-screen').style.display =
+        'flex';
+
+    document.getElementById('login-code').value = '';
+
+    document.getElementById('login-error').textContent =
+        '';
+}
+
+function showCorrectScreen() {
+    if (
+        monthlyBudget > 0 &&
+        accessCode
+    ) {
+        document.getElementById('setup-screen').style.display =
+            'none';
+
+        document.getElementById('login-screen').style.display =
+            'flex';
+
+        document.getElementById('app-screen').style.display =
+            'none';
+    } else {
+        document.getElementById('setup-screen').style.display =
+            'flex';
+
+        document.getElementById('login-screen').style.display =
+            'none';
+
+        document.getElementById('app-screen').style.display =
+            'none';
     }
 }
 
@@ -1380,7 +1419,7 @@ function changeCode() {
         return;
     }
 
-    if (!/^\d{4}\$/.test(newCode)) {
+    if (!/^\d{4}$/.test(newCode)) {
         alert(
             'Le code doit contenir exactement 4 chiffres.'
         );
@@ -1500,7 +1539,7 @@ function loadData() {
             );
 
         accessCode =
-            data.accessCode || '';
+            String(data.accessCode || '');
 
         currentMonth =
             Number(
@@ -1526,7 +1565,7 @@ function loadData() {
             );
 
         lastSavedMonth =
-            data.lastSavedMonth || '';
+            String(data.lastSavedMonth || '');
 
         ensureMonthExists();
     } catch (error) {
