@@ -201,6 +201,37 @@ function setupBudget() {
     );
 }
 
+function login() {
+    if (!accessCode) {
+        loadData();
+    }
+
+    const code = String(
+        document.getElementById('login-code').value || ''
+    ).trim();
+
+    if (code === String(accessCode).trim()) {
+        document.getElementById('setup-screen').style.display =
+            'none';
+
+        document.getElementById('login-screen').style.display =
+            'none';
+
+        document.getElementById('app-screen').style.display =
+            'block';
+
+        updateMonthDisplay();
+        updateDashboard();
+        checkMonthFinishedAutomatically();
+
+        document.getElementById('login-error').textContent =
+            '';
+    } else {
+        document.getElementById('login-error').textContent =
+            'Code incorrect.';
+    }
+}
+
 
 /* =========================================================
    NAVIGATION
